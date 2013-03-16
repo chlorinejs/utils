@@ -1,6 +1,6 @@
 # Chlorine
 
-[![Build Status](https://api.travis-ci.org/chlorinejs/chlorine-utils.png)](https://travis-ci.org/chlorinejs/chlorine-utils)
+[![Build Status](https://api.travis-ci.org/chlorinejs/utils.png)](https://travis-ci.org/chlorinejs/utils)
 
 Utilities for Chlorine projects.
 
