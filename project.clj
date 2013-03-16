@@ -1,4 +1,4 @@
-(defproject chlorine-utils "1.0.0"
+(defproject chlorine-utils "1.1.0"
   :description "Utility library for Chlorine projects"
   :url "http://github.com/chlorinejs/chlorine-utils"
   :dependencies [[org.clojure/clojure "1.5.0"]

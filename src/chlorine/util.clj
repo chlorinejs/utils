@@ -41,35 +41,6 @@
          (re-compare y (first more)))
        false)))
 
-(defn flatten-files
-  "Receives list of files, returns list of single files"
-  [& files]
-  (let [process
-        (fn [x]
-          (cond
-           (or (string? x) (keyword? x))
-           [x]
-
-           (vector? x)
-           (if (keyword? (first x))
-             (case (first x)
-               (:resource :private :public)
-               (let [prefix (if (not= :resource (first x))
-                              (str "/" (name (first x))))]
-                 (case (count x)
-                   1 nil
-                   2 (cond
-                      (string? (second x))
-                      [[:resource
-                        (str prefix
-                             (when-not (.startsWith (second x) "/") "/")
-                             (second x))]])
-                   ;; more than 2
-                   (map #(vector :resource (str prefix %))
-                        (filter string? (rest x)))))
-               nil))))]
-    (mapcat process files)))
-
 (defn path-type
   "Detects type of a path."
   [path]
@@ -81,6 +52,7 @@
    (.startsWith path "~/")
    :home-relative
    (or (.startsWith path "/")
+       (.startsWith path "r://")
        (.startsWith path "http://")
        (.startsWith path "https://")
        (.startsWith path "file://"))
