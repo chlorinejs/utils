@@ -27,7 +27,7 @@
          :dir-relative))
   (is (= (path-type "/full/path")
          :absolute))
-  (is (= (path-type "r://full/path")
+  (is (= (path-type "r:/full/path")
          :absolute))
   (is (= (path-type "http://full/path")
          :absolute))
@@ -39,13 +39,17 @@
 (deftest file-and-dir-tests
   (is (= (file-and-dir "/my/file")
          ["/my/file" "/my/"]))
+  ;; tests for http:// - the same to r:// and https://
   (is (= (file-and-dir "http://abc.de/file.cl2")
          ["http://abc.de/file.cl2" "http://abc.de/"]))
   (is (= (file-and-dir "http://abc.de/dir/file.cl2")
          ["http://abc.de/dir/file.cl2" "http://abc.de/dir/"]))
+
   (is (= (file-and-dir "~/my/file")
          [(str (System/getProperty "user.home") "/" "my/file")
           (str (System/getProperty "user.home") "/" "my/")]))
+
+  ;; with current directory bindings
   (is (= (binding [*cpd* "/fun/ban/"]
            (file-and-dir "my/file"))
          ["/fun/ban/my/file" "/fun/ban/my/"]))
@@ -54,4 +58,10 @@
          ["/foo/bar/my/file" "/foo/bar/my/"]))
   (is (= (binding [*cwd* "/foo/bar/"]
            (file-and-dir "../my/file"))
-         ["/foo/my/file" "/foo/my/"])))
+         ["/foo/my/file" "/foo/my/"]))
+  (is (= (binding [*cwd* "http://foo/bar/"]
+           (file-and-dir "./my/file"))
+         ["http://foo/bar/my/file" "http://foo/bar/my/"]))
+  (is (= (binding [*cwd* "r:/foo/bar/"]
+           (file-and-dir "./my/file"))
+         ["r:/foo/bar/my/file" "r:/foo/bar/my/"])))

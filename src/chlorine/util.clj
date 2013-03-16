@@ -41,6 +41,18 @@
          (re-compare y (first more)))
        false)))
 
+(defn resource-path?
+  "Check if a string is a resource url (starting with r:/)."
+  [s]
+  (.startsWith s "r:/"))
+
+(defn url?
+  "Check if a string is an url."
+  [s]
+  (or (.startsWith s "http://")
+      (.startsWith s "https://")
+      (.startsWith s "file://")))
+
 (defn path-type
   "Detects type of a path."
   [path]
@@ -51,11 +63,9 @@
 
    (.startsWith path "~/")
    :home-relative
-   (or (.startsWith path "/")
-       (.startsWith path "r://")
-       (.startsWith path "http://")
-       (.startsWith path "https://")
-       (.startsWith path "file://"))
+   (or (resource-path? path)
+       (url? path)
+       (.startsWith path "/"))
    :absolute
 
    :else
@@ -73,14 +83,12 @@
           (let [cwd (if (vector? *cwd*)
                       (second *cwd*)
                       *cwd*)]
-            (if (or (.startsWith cwd "http://")
-                    (.startsWith cwd "https://"))
+            (if (url? cwd)
               (url-normalize (str cwd bare-file))
               (normalize (str cwd bare-file))))
 
           :absolute
-          (if (or (.startsWith bare-file "http://")
-                  (.startsWith bare-file "https://"))
+          (if (url? bare-file)
             (url-normalize bare-file)
             bare-file)
 
@@ -92,23 +100,15 @@
           (str *cpd* bare-file))
 
         bare-dir
-        (if (or (.startsWith normalized-bare-file "http://")
-                (.startsWith normalized-bare-file "https://"))
+        (if (url? normalized-bare-file)
           (url-normalize (str normalized-bare-file "/../"))
 
           (normalize (str normalized-bare-file "/../")))
         bare-dir
         (if (.endsWith bare-dir "/")
           bare-dir
-          (str bare-dir "/"))
-
-        output->resource?
-        (or (vector? path)
-            (and (= :file-relative (path-type bare-file))
-                 (vector? *cwd*)))]
-    (if output->resource?
-      [[:resource normalized-bare-file] [:resource bare-dir]]
-      [normalized-bare-file bare-dir])))
+          (str bare-dir "/"))]
+    [normalized-bare-file bare-dir]))
 
 (defn replace-map
   "Replaces match sub-strings with replacements found in a map.
