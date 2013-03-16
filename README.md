@@ -2,6 +2,6 @@
 
 [![Build Status](https://api.travis-ci.org/chlorinejs/utils.png)](https://travis-ci.org/chlorinejs/utils)
 
-Utilities for Chlorine projects.
+Utility library for ChlorineJS projects.
 
 For more information see the chlorine [wiki](https://github.com/chlorinejs/chlorine/wiki).
