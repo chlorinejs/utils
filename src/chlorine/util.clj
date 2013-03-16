@@ -46,6 +46,12 @@
   [s]
   (.startsWith s "r:/"))
 
+(defn to-resource
+  "Makes resource object from r:/ path."
+  [s]
+  (clojure.java.io/resource
+   (clojure.string/replace s #"^r:/" "")))
+
 (defn url?
   "Check if a string is an url."
   [s]
