@@ -102,6 +102,20 @@
                      "/"
                      fname))))
 
+(defn file-exists?
+  "If file exists, returns file. Else returns nil.
+  Please note URLs are not checked and there should be a
+  exception handler in case URL doesn't exist."
+  [abs-file]
+  (cond
+   (resource-path? abs-file)
+   (when (to-resource abs-file)
+     abs-file)
+
+   (or (url? abs-file)
+       (.isFile (clojure.java.io/file abs-file)))
+   abs-file))
+
 (defn replace-map
   "Replaces match sub-strings with replacements found in a map.
 Use array-map to reserve key orders."
