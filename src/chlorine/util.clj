@@ -4,7 +4,9 @@
   (:import [java.util Calendar]
            [java.text SimpleDateFormat]))
 
-(def ^:dynamic *cwd*)
+(def ^:dynamic ^{:doc "Stores current working directory"} *cwd*)
+(def ^:dynamic ^{:doc "Stores paths to search for filenames with find-in-paths"}
+  *paths* [])
 
 (defn unzip
   "Reverse of 'clojure.core/zipmap"
@@ -115,6 +117,18 @@
    (or (url? abs-file)
        (.isFile (clojure.java.io/file abs-file)))
    abs-file))
+
+(defn find-in-paths
+  "Tries to find a file with such name in paths.
+  Returns found file's path if succeeded, else returns nil."
+  [file-name]
+  (let [abs-path (to-abs-path file-name)]
+    (if abs-path
+      (file-exists? abs-path)
+      ;; relative path? Find in paths
+      (let [paths (conj *paths* *cwd*)
+            full-paths (map #(to-full-path % file-name) paths)]
+        (some file-exists? full-paths)))))
 
 (defn replace-map
   "Replaces match sub-strings with replacements found in a map.
