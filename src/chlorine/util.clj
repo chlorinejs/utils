@@ -92,6 +92,16 @@
    ;; -> relative -> nil
    ))
 
+(defn to-full-path
+  "Makes a full path from a directory path and a relative file name."
+  [path-dir fname]
+  (let [normalizer (if (url? path-dir)
+                     url-normalize
+                     normalize)]
+    (normalizer (str (clojure.string/replace path-dir #"/$" "")
+                     "/"
+                     fname))))
+
 (defn replace-map
   "Replaces match sub-strings with replacements found in a map.
 Use array-map to reserve key orders."

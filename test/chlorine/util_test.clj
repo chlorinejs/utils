@@ -33,3 +33,11 @@
          (to-abs-path "/some/path/to.foo")))
   (is (= nil
          (to-abs-path "some/relative/path/to.foo"))))
+
+(deftest to-full-path-tests
+  (is (= "/foo/bar/boo.bazz"
+         (to-full-path "/foo/bar/" "boo.bazz")))
+  (is (= "/foo/boo.bazz"
+         (to-full-path "/foo/bar/" "../boo.bazz")))
+  (is (= "http://foo.com/boo.bazz"
+         (to-full-path "http://foo.com/bar/" "../boo.bazz"))))
