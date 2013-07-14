@@ -5,7 +5,6 @@
            [java.text SimpleDateFormat]))
 
 (def ^:dynamic *cwd*)
-(def ^:dynamic *cpd* (str (.getCanonicalFile (clojure.java.io/file ".")) "/"))
 
 (defn unzip
   "Reverse of 'clojure.core/zipmap"
@@ -58,63 +57,6 @@
   (or (.startsWith s "http://")
       (.startsWith s "https://")
       (.startsWith s "file://")))
-
-(defn path-type
-  "Detects type of a path."
-  [path]
-  (cond
-   (or (.startsWith path "./")
-       (.startsWith path "../"))
-   :file-relative
-
-   (.startsWith path "~/")
-   :home-relative
-   (or (resource-path? path)
-       (url? path)
-       (.startsWith path "/"))
-   :absolute
-
-   :else
-   :dir-relative))
-
-(defn file-and-dir
-  "Detects file and directory name from paths."
-  [path]
-  (let [bare-file (if (vector? path)
-                    (second path)
-                    path)
-        normalized-bare-file
-        (case (path-type bare-file)
-          :file-relative
-          (let [cwd (if (vector? *cwd*)
-                      (second *cwd*)
-                      *cwd*)]
-            (if (url? cwd)
-              (url-normalize (str cwd bare-file))
-              (normalize (str cwd bare-file))))
-
-          :absolute
-          (if (url? bare-file)
-            (url-normalize bare-file)
-            bare-file)
-
-          :home-relative
-          (clojure.string/replace bare-file
-                                  #"^~" (System/getProperty "user.home"))
-
-          :dir-relative
-          (str *cpd* bare-file))
-
-        bare-dir
-        (if (url? normalized-bare-file)
-          (url-normalize (str normalized-bare-file "/../"))
-
-          (normalize (str normalized-bare-file "/../")))
-        bare-dir
-        (if (.endsWith bare-dir "/")
-          bare-dir
-          (str bare-dir "/"))]
-    [normalized-bare-file bare-dir]))
 
 (defn replace-map
   "Replaces match sub-strings with replacements found in a map.
