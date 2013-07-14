@@ -66,6 +66,32 @@
                      normalize)]
     (normalizer (str abs-file "/../"))))
 
+(defn to-abs-path
+  "Converts a path to an absolute one.
+  - If given path is home-relative, expands it
+  - If given path is already absolute path (files, urls or resources)
+  returns it.
+  - Else (given path is relative), returns nil."
+  [path]
+  (cond
+   (or (.startsWith path "./")
+       (.startsWith path "../"))
+   nil
+
+   (.startsWith path "~/")
+   (clojure.string/replace
+    path
+    #"^~" (System/getProperty "user.home"))
+
+   (or (resource-path? path)
+       (url? path)
+       (.startsWith path "/"))
+   path
+   ;; else?
+   ;; "something/some-path.cl2", "some-file.cl2"
+   ;; -> relative -> nil
+   ))
+
 (defn replace-map
   "Replaces match sub-strings with replacements found in a map.
 Use array-map to reserve key orders."

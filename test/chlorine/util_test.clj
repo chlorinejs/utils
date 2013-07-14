@@ -23,3 +23,13 @@
          (get-dir "/foo/bar/bazz.cl2")))
   (is (= "http://foo.com/bar"
          (get-dir "http://foo.com/bar/bazz.cl2"))))
+
+(deftest to-abs-path-tests
+  (is (= (str (System/getProperty "user.home") "/foo.bar")
+         (to-abs-path "~/foo.bar")))
+  (is (= "http://some.path/to.foo"
+         (to-abs-path "http://some.path/to.foo")))
+  (is (= "/some/path/to.foo"
+         (to-abs-path "/some/path/to.foo")))
+  (is (= nil
+         (to-abs-path "some/relative/path/to.foo"))))
