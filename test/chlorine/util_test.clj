@@ -15,3 +15,11 @@
   (is (= "fooFarfaZ"
          (replace-map "fooFarfaz" (array-map "z" "Z"
                                              #"z$" "_")))))
+
+(deftest get-dir-tests
+  (is (= "r:/foo/bar"
+         (get-dir "r:/foo/bar/bazz.cl2")))
+  (is (= "/foo/bar"
+         (get-dir "/foo/bar/bazz.cl2")))
+  (is (= "http://foo.com/bar"
+         (get-dir "http://foo.com/bar/bazz.cl2"))))

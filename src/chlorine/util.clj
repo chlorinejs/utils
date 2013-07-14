@@ -58,6 +58,14 @@
       (.startsWith s "https://")
       (.startsWith s "file://")))
 
+(defn get-dir
+  "Get directory path from absolute file path."
+  [abs-file]
+  (let [normalizer (if (url? abs-file)
+                     url-normalize
+                     normalize)]
+    (normalizer (str abs-file "/../"))))
+
 (defn replace-map
   "Replaces match sub-strings with replacements found in a map.
 Use array-map to reserve key orders."
